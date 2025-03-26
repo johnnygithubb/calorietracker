@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Fitness Plan - FitKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        @media (max-width: 640px) {
+            .card-container {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="w-full shadow-lg rounded-lg overflow-hidden">
+            <!-- Tab Navigation -->
+            <div class="flex border-b">
+                <button id="plan-tab" class="px-4 py-3 w-1/2 text-center font-medium text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 border-b-2 border-blue-500">Plan</button>
+                <button id="info-tab" class="px-4 py-3 w-1/2 text-center font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800">Info</button>
+            </div>
+            
+            <!-- Plan Content -->
+            <div id="plan-content">
+                <div class="p-4 sm:p-6 dark:bg-gray-800 bg-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <span tabindex="0" class="focus:outline-none text-base font-bold dark:text-gray-100 text-gray-800">Your Workout Plan</span>
+                        <div class="flex items-center">
+                            <button aria-label="calendar backward" class="focus:text-gray-400 hover:text-gray-400 text-gray-800 dark:text-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <polyline points="15 6 9 12 15 18" />
+                                </svg>
+                            </button>
+                            <button aria-label="calendar forward" class="focus:text-gray-400 hover:text-gray-400 ml-3 text-gray-800 dark:text-gray-100"> 
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <polyline points="9 6 15 12 9 18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar Legend -->
+                    <div class="flex items-center justify-center mb-4 text-sm">
+                        <div class="flex items-center mr-4">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
+                            <span>Workout Day</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-gray-200 rounded-full mr-1"></div>
+                            <span>Rest Day</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-12 overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Mo</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Tu</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">We</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Th</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Fr</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Sa</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="w-full flex justify-center">
+                                            <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">Su</p>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center"></div>
+                                    </td>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center"></div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center"></div>
+                                    </td>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">1</p>
+                                        </div>
+                                    </td>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">2</p>
+                                        </div>
+                                    </td>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">3</p>
+                                        </div>
+                                    </td>
+                                    <td class="pt-6">
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">4</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">5</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">6</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">7</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">8</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">9</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">10</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">11</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">12</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">13</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">14</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">15</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">16</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">17</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">18</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">19</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">20</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">21</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">22</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">23</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">24</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100">25</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">26</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">27</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">28</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">29</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                            <p class="text-base text-gray-500 dark:text-gray-100 font-medium">30</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-4 sm:p-6 dark:bg-gray-700 bg-gray-50 rounded-b">
+                    <div class="px-4">
+                        <div id="workout-details" class="border-b pb-4 border-gray-400 border-dashed">
+                            <h3 id="selected-date" class="text-lg font-medium leading-5 text-gray-800 dark:text-gray-100 mt-2">Select a date to view workout</h3>
+                            
+                            <!-- Category Selector with Icons -->
+                            <div class="flex justify-center mt-3 mb-4">
+                                <div class="inline-flex rounded-md shadow-sm" role="group">
+                                    <button id="fitness-tab" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-l-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-700 active">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h.5A2.5 2.5 0 0020 5.5v-1.5" />
+                                        </svg>
+                                        <span class="sr-only">Fitness</span>
+                                    </button>
+                                    <button id="nutrition-tab" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-700 focus:text-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <span class="sr-only">Nutrition</span>
+                                    </button>
+                                    <button id="mindset-tab" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-700 focus:text-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                        </svg>
+                                        <span class="sr-only">Mindset</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Content containers for each category -->
+                            <div id="fitness-content" class="mt-4">
+                                <div id="workout-content">
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Click on a day in the calendar to view that day's workout plan.</p>
+                                </div>
+                            </div>
+                            
+                            <div id="nutrition-content" class="mt-4 hidden">
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    <strong>Daily Nutrition Plan</strong><br>
+                                    • Protein: <span id="daily-protein">-</span><br>
+                                    • Carbs: <span id="daily-carbs">-</span><br>
+                                    • Fats: <span id="daily-fats">-</span><br>
+                                    • Total Calories: <span id="daily-calories">-</span><br>
+                                    • Water Target: <span id="daily-water">-</span><br>
+                                    <br>
+                                    <strong>Meal Timing:</strong><br>
+                                    • Breakfast: High protein, moderate carbs<br>
+                                    • Lunch: Balanced meal with lean protein<br>
+                                    • Pre-workout: Light carbs for energy<br>
+                                    • Post-workout: Protein and carbs for recovery<br>
+                                    • Dinner: Protein and vegetables, lower carbs
+                                </p>
+                            </div>
+                            
+                            <div id="mindset-content" class="mt-4 hidden">
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    <strong>Daily Mindset Practice</strong><br>
+                                    • 5-minute morning visualization<br>
+                                    • Pre-workout positive affirmations<br>
+                                    • Post-workout reflection<br>
+                                    • Evening gratitude practice<br>
+                                    <br>
+                                    <strong>Focus Areas:</strong><br>
+                                    • Building consistency<br>
+                                    • Overcoming obstacles<br>
+                                    • Celebrating small wins<br>
+                                    • Maintaining motivation
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info Content -->
+            <div id="info-content" class="hidden">
+                <div class="p-4 sm:p-6 dark:bg-gray-800 bg-white">
+                    <h3 class="text-lg font-medium leading-5 text-gray-800 dark:text-gray-100 mb-4">Your Information</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Gender</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ gender }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Height</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ height_feet }}' {{ height_inches }}" ({{ height_m|round(2) }} m)</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Weight</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ weight_lbs }} lbs ({{ weight_kg|round(1) }} kg)</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Goal Weight</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ goal_weight_lbs }} lbs ({{ goal_weight_kg|round(1) }} kg)</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Goal</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ goal }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">BMI</p>
+                            <p class="text-base text-gray-800 dark:text-gray-100">{{ bmi|round(1) }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Fitness Metrics -->
+                    <div class="mt-8">
+                        <h3 class="text-lg font-medium leading-5 text-gray-800 dark:text-gray-100 mb-4">Advanced Fitness Metrics</h3>
+                        <div id="advanced-metrics" class="space-y-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">BMR (Basal Metabolic Rate)</p>
+                                <p id="bmr-value" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">TDEE (Total Daily Energy Expenditure)</p>
+                                <p id="tdee-value" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Recommended Calorie Intake</p>
+                                <p id="calorie-value" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                            </div>
+                            
+                            <!-- Activity Level Selector -->
+                            <div class="mt-4">
+                                <label for="activity-level" class="block text-sm font-medium text-gray-500 dark:text-gray-400">Activity Level</label>
+                                <select id="activity-level" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option value="sedentary">Sedentary (little to no exercise)</option>
+                                    <option value="lightly active">Lightly Active (light exercise 1-3 days/week)</option>
+                                    <option value="moderately active" selected>Moderately Active (moderate exercise 3-5 days/week)</option>
+                                    <option value="very active">Very Active (hard exercise 6-7 days/week)</option>
+                                    <option value="super active">Super Active (very hard exercise or physical job)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Age Input -->
+                            <div class="mt-4">
+                                <label for="age-input" class="block text-sm font-medium text-gray-500 dark:text-gray-400">Age</label>
+                                <input type="number" id="age-input" value="30" min="18" max="100" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            </div>
+                        </div>
+                        
+                        <!-- Macronutrient Breakdown -->
+                        <div class="mt-8">
+                            <h4 class="text-md font-medium leading-5 text-gray-800 dark:text-gray-100 mb-2">Macronutrient Breakdown</h4>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Protein</span>
+                                    <span id="protein-value" class="text-sm text-gray-800 dark:text-gray-100">Calculating...</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                    <div id="protein-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                
+                                <div class="flex justify-between mb-2 mt-4">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Carbohydrates</span>
+                                    <span id="carbs-value" class="text-sm text-gray-800 dark:text-gray-100">Calculating...</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                    <div id="carbs-bar" class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                
+                                <div class="flex justify-between mb-2 mt-4">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Fats</span>
+                                    <span id="fats-value" class="text-sm text-gray-800 dark:text-gray-100">Calculating...</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                    <div id="fats-bar" class="bg-yellow-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Weight Progress Estimation -->
+                        <div class="mt-8">
+                            <h4 class="text-md font-medium leading-5 text-gray-800 dark:text-gray-100 mb-2">Weight Progress Estimation</h4>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                                <!-- Exercise Burn Input -->
+                                <div class="mb-4">
+                                    <label for="exercise-burn" class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Daily Exercise Calorie Burn</label>
+                                    <div class="flex items-center">
+                                        <input type="range" id="exercise-burn" min="0" max="1000" step="50" value="300" 
+                                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                        <span id="exercise-burn-value" class="ml-2 text-sm font-medium text-gray-800 dark:text-gray-100 min-w-[60px] text-right">300 cal</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Progress Estimates -->
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Days to Lose/Gain 1 Pound</p>
+                                        <p id="days-for-pound" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Estimated 30-Day Progress</p>
+                                        <p id="thirty-day-progress" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Projected Weight in 30 Days</p>
+                                        <p id="projected-weight" class="text-base text-gray-800 dark:text-gray-100">Calculating...</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Progress Visualization -->
+                                <div class="mt-4">
+                                    <div class="relative pt-1">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <span id="current-weight-label" class="text-xs font-semibold inline-block text-blue-600">
+                                                    Current: {{ weight_kg|round(1) }} kg
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span id="goal-weight-label" class="text-xs font-semibold inline-block text-green-600">
+                                                    Goal: {{ goal_weight_kg|round(1) }} kg
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="overflow-hidden h-2 mb-1 text-xs flex rounded bg-gray-200">
+                                            <div id="progress-indicator" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500" style="width: 0%"></div>
+                                        </div>
+                                        <div id="progress-scale" class="flex justify-between text-xs text-gray-500">
+                                            <span>0%</span>
+                                            <span>25%</span>
+                                            <span>50%</span>
+                                            <span>75%</span>
+                                            <span>100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 sm:p-6 dark:bg-gray-700 bg-gray-50 rounded-b">
+                    <div class="px-4">
+                        <div class="border-b pb-4 border-gray-400 border-dashed">
+                            <p class="text-sm text-gray-600 dark:text-gray-300">This information was used to generate your personalized fitness plan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="workout-data" style="display: none;" data-workout='{{ workout_plan|tojson }}'>
+</div>
+
+<script>
+// Parse the workout data from the data attribute
+let workoutData = {};
+try {
+    const workoutDataElement = document.getElementById('workout-data');
+    if (workoutDataElement && workoutDataElement.dataset.workout) {
+        workoutData = JSON.parse(workoutDataElement.dataset.workout);
+        console.log("Successfully parsed workout data");
+        
+        // Ensure we have at least 30 days of workout data
+        const maxDays = 30;
+        const existingDays = Object.keys(workoutData).map(day => parseInt(day));
+        const lastExistingDay = Math.max(...existingDays, 0);
+        
+        // Generate additional workout days if we have less than 30
+        if (lastExistingDay < maxDays) {
+            // Use existing workout templates to create more days
+            const templates = [];
+            for (const day in workoutData) {
+                if (workoutData[day] && workoutData[day].exercises && workoutData[day].exercises.length > 0) {
+                    templates.push(workoutData[day]);
+                }
+            }
+            
+            if (templates.length > 0) {
+                for (let i = lastExistingDay + 1; i <= maxDays; i++) {
+                    // Cycle through templates
+                    const template = templates[(i - 1) % templates.length];
+                    
+                    // Create a deep copy of the template
+                    const newWorkout = JSON.parse(JSON.stringify(template));
+                    
+                    // Modify the body parts slightly to make it look different
+                    const bodyParts = ["Chest", "Back", "Legs", "Arms", "Shoulders", "Core", "Full Body", "Upper Body", "Lower Body"];
+                    const randomIndex = Math.floor(Math.random() * bodyParts.length);
+                    
+                    if (newWorkout.body_parts) {
+                        // Sometimes keep original, sometimes replace
+                        if (Math.random() > 0.5) {
+                            newWorkout.body_parts = bodyParts[randomIndex] + " Workout";
+                        }
+                    } else {
+                        newWorkout.body_parts = bodyParts[randomIndex] + " Workout";
+                    }
+                    
+                    // Add the new workout to the data
+                    workoutData[i.toString()] = newWorkout;
+                }
+                
+                console.log("Generated additional workout days. Total days:", Object.keys(workoutData).length);
+            }
+        }
+    } else {
+        console.error("Workout data element or attribute not found");
+    }
+} catch (error) {
+    console.error("Error parsing workout data:", error);
+}
+
+// Debug the workout data
+console.log("Workout data:", workoutData);
+console.log("Number of days:", Object.keys(workoutData).length);
+console.log("Days available:", Object.keys(workoutData).join(', '));
+
+// Function to create a more detailed debug display
+function createDetailedDebugDisplay() {
+    const debugEl = document.createElement('div');
+    debugEl.style.position = 'fixed';
+    debugEl.style.bottom = '10px';
+    debugEl.style.left = '10px';
+    debugEl.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    debugEl.style.color = 'white';
+    debugEl.style.padding = '10px';
+    debugEl.style.borderRadius = '5px';
+    debugEl.style.fontFamily = 'monospace';
+    debugEl.style.fontSize = '12px';
+    debugEl.style.maxWidth = '400px';
+    debugEl.style.maxHeight = '200px';
+    debugEl.style.overflow = 'auto';
+    debugEl.style.zIndex = '1000';
+    
+    const availableDays = Object.keys(workoutData).sort((a, b) => parseInt(a) - parseInt(b));
+    
+    let debugContent = `<div>Total workout days: ${availableDays.length}</div>`;
+    debugContent += `<div>Days with workouts: ${availableDays.join(', ')}</div>`;
+    
+    // Add sample of workout data
+    if (availableDays.length > 0) {
+        const sampleDay = availableDays[0];
+        const sampleWorkout = workoutData[sampleDay];
+        debugContent += `<div>Sample day ${sampleDay}: ${sampleWorkout.body_parts}</div>`;
+        debugContent += `<div>Sample exercises: ${sampleWorkout.exercises.length}</div>`;
+    }
+    
+    debugEl.innerHTML = debugContent;
+    document.body.appendChild(debugEl);
+    
+    // Add keyboard shortcut to toggle debug panel
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'd') {
+            debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
+        }
+    });
+    
+    return debugEl;
+}
+
+// Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const planTab = document.getElementById('plan-tab');
+    const infoTab = document.getElementById('info-tab');
+    const planContent = document.getElementById('plan-content');
+    const infoContent = document.getElementById('info-content');
+    
+    planTab.addEventListener('click', function() {
+        planTab.classList.add('text-gray-800', 'dark:text-gray-100', 'border-b-2', 'border-blue-500');
+        planTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+        infoTab.classList.add('text-gray-500', 'dark:text-gray-400');
+        infoTab.classList.remove('text-gray-800', 'dark:text-gray-100', 'border-b-2', 'border-blue-500');
+        
+        planContent.classList.remove('hidden');
+        infoContent.classList.add('hidden');
+    });
+    
+    infoTab.addEventListener('click', function() {
+        infoTab.classList.add('text-gray-800', 'dark:text-gray-100', 'border-b-2', 'border-blue-500');
+        infoTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+        planTab.classList.add('text-gray-500', 'dark:text-gray-400');
+        planTab.classList.remove('text-gray-800', 'dark:text-gray-100', 'border-b-2', 'border-blue-500');
+        
+        infoContent.classList.remove('hidden');
+        planContent.classList.add('hidden');
+    });
+});
+
+// Function to display workout for a day
+function showWorkout(dayNum) {
+    const selectedDateEl = document.getElementById('selected-date');
+    const workoutContentEl = document.getElementById('workout-content');
+    
+    console.log("Showing workout for day:", dayNum);
+    console.log("Workout data for this day:", workoutData[dayNum]);
+    
+    // Store the current day in a data attribute for navigation
+    selectedDateEl.dataset.currentDay = dayNum;
+    
+    if (workoutData[dayNum]) {
+        const workout = workoutData[dayNum];
+        selectedDateEl.textContent = `Day ${dayNum}: ${workout.body_parts}`;
+        
+        let exercisesHtml = '<ul class="space-y-2">';
+        if (workout.exercises && workout.exercises.length > 0) {
+            workout.exercises.forEach(exercise => {
+                exercisesHtml += `
+                    <li class="text-sm">
+                        <span class="font-medium">${exercise.name}</span>: 
+                        <span>${exercise.sets} sets x ${exercise.reps} reps</span>
+                    </li>
+                `;
+            });
+        } else {
+            exercisesHtml += '<li class="text-sm">No exercises found for this day</li>';
+        }
+        exercisesHtml += '</ul>';
+        
+        workoutContentEl.innerHTML = exercisesHtml;
+        
+        // Update nutrition content based on the workout day
+        updateNutritionContent(workout);
+    } else {
+        selectedDateEl.textContent = `Day ${dayNum}`;
+        workoutContentEl.innerHTML = '<p class="text-sm text-gray-600 dark:text-gray-300">No workout scheduled for this day.</p>';
+        
+        // Always use the user's actual macros even for rest days
+        updateNutritionContent(null);
+    }
+}
+
+// Function to update nutrition content based on workout
+function updateNutritionContent(workout) {
+    // Get macros from the advanced fitness calculator
+    const proteinEl = document.getElementById('protein-value');
+    const carbsEl = document.getElementById('carbs-value');
+    const fatsEl = document.getElementById('fats-value');
+    const calorieEl = document.getElementById('calorie-value');
+    
+    // Extract just the numeric values
+    const proteinMatch = proteinEl ? proteinEl.textContent.match(/(\d+)g/) : null;
+    const carbsMatch = carbsEl ? carbsEl.textContent.match(/(\d+)g/) : null;
+    const fatsMatch = fatsEl ? fatsEl.textContent.match(/(\d+)g/) : null;
+    const calorieMatch = calorieEl ? calorieEl.textContent.match(/(\d+)/) : null;
+    
+    // Always use the user's actual macros from the calculator
+    const protein = proteinMatch ? proteinMatch[1] + "g" : "~30% of calories";
+    const carbs = carbsMatch ? carbsMatch[1] + "g" : "~40% of calories";
+    const fats = fatsMatch ? fatsMatch[1] + "g" : "~30% of calories";
+    const calories = calorieMatch ? calorieMatch[1] + " calories" : "Based on your goals";
+    
+    // Calculate water intake target (standard formula: body weight in oz / 2)
+    const weightLbs = parseFloat("{{ weight_lbs }}");
+    const waterOz = Math.round(weightLbs / 2);
+    const waterLiters = Math.round(waterOz * 0.0295735 * 10) / 10; // Convert oz to liters with 1 decimal place
+    const waterTarget = `${waterOz} oz (${waterLiters} liters)`;
+    
+    // Update the nutrition content with user's actual values
+    document.getElementById('daily-protein').textContent = protein;
+    document.getElementById('daily-carbs').textContent = carbs;
+    document.getElementById('daily-fats').textContent = fats;
+    document.getElementById('daily-calories').textContent = calories;
+    document.getElementById('daily-water').textContent = waterTarget;
+    
+    // Get the nutrition content element
+    const nutritionContentEl = document.getElementById('nutrition-content');
+    
+    // Update meal timing recommendations based on whether it's a workout day or rest day
+    let mealTimingHtml = '<strong>Meal Timing:</strong><br>';
+    
+    if (workout) {
+        // Workout day meal timing
+        mealTimingHtml += `
+            • Breakfast: High protein, moderate carbs<br>
+            • Pre-workout: Light carbs for energy (1-2 hours before)<br>
+            • Post-workout: Protein and carbs for recovery (within 30 min)<br>
+            • Lunch: Balanced meal with lean protein<br>
+            • Dinner: Protein and vegetables, lower carbs
+        `;
+    } else {
+        // Rest day meal timing
+        mealTimingHtml += `
+            • Breakfast: Protein and healthy fats<br>
+            • Lunch: Balanced meal with lean protein<br>
+            • Afternoon snack: Small protein-rich snack<br>
+            • Dinner: Protein and vegetables, lower carbs<br>
+            • Evening: Light protein if needed (casein or cottage cheese)
+        `;
+    }
+    
+    // Update the meal timing section
+    const mealTimingSection = nutritionContentEl.querySelector('p');
+    if (mealTimingSection) {
+        // Split the content at the meal timing header
+        const contentParts = mealTimingSection.innerHTML.split('<strong>Meal Timing:</strong>');
+        if (contentParts.length > 0) {
+            // Replace the meal timing section while keeping the macros section
+            mealTimingSection.innerHTML = contentParts[0] + mealTimingHtml;
+        }
+    }
+}
+
+// Function to navigate to the next or previous day
+function navigateDay(direction) {
+    const selectedDateEl = document.getElementById('selected-date');
+    const currentDay = parseInt(selectedDateEl.dataset.currentDay || "1");
+    const availableDays = Object.keys(workoutData).map(day => parseInt(day)).sort((a, b) => a - b);
+    
+    if (availableDays.length === 0) return;
+    
+    let nextDayIndex;
+    const currentDayIndex = availableDays.indexOf(currentDay);
+    
+    if (direction === 'next') {
+        nextDayIndex = currentDayIndex < availableDays.length - 1 ? currentDayIndex + 1 : 0;
+    } else {
+        nextDayIndex = currentDayIndex > 0 ? currentDayIndex - 1 : availableDays.length - 1;
+    }
+    
+    const nextDay = availableDays[nextDayIndex].toString();
+    showWorkout(nextDay);
+}
+
+// Add click event to calendar days
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded, setting up calendar days");
+    
+    // Create detailed debug display
+    const debugEl = createDetailedDebugDisplay();
+    
+    // Set up navigation buttons
+    const prevButton = document.querySelector('button[aria-label="calendar backward"]');
+    const nextButton = document.querySelector('button[aria-label="calendar forward"]');
+    
+    if (prevButton) {
+        prevButton.addEventListener('click', function() {
+            navigateDay('prev');
+        });
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', function() {
+            navigateDay('next');
+        });
+    }
+    
+    // Set up category tabs
+    const fitnessTab = document.getElementById('fitness-tab');
+    const nutritionTab = document.getElementById('nutrition-tab');
+    const mindsetTab = document.getElementById('mindset-tab');
+    
+    const fitnessContent = document.getElementById('fitness-content');
+    const nutritionContent = document.getElementById('nutrition-content');
+    const mindsetContent = document.getElementById('mindset-content');
+    
+    fitnessTab.addEventListener('click', function() {
+        // Update active state for tabs
+        fitnessTab.classList.add('bg-blue-600', 'text-white');
+        fitnessTab.classList.remove('bg-white', 'text-gray-900');
+        
+        nutritionTab.classList.remove('bg-blue-600', 'text-white');
+        nutritionTab.classList.add('bg-white', 'text-gray-900');
+        
+        mindsetTab.classList.remove('bg-blue-600', 'text-white');
+        mindsetTab.classList.add('bg-white', 'text-gray-900');
+        
+        // Show/hide content
+        fitnessContent.classList.remove('hidden');
+        nutritionContent.classList.add('hidden');
+        mindsetContent.classList.add('hidden');
+    });
+    
+    nutritionTab.addEventListener('click', function() {
+        // Update active state for tabs
+        nutritionTab.classList.add('bg-blue-600', 'text-white');
+        nutritionTab.classList.remove('bg-white', 'text-gray-900');
+        
+        fitnessTab.classList.remove('bg-blue-600', 'text-white');
+        fitnessTab.classList.add('bg-white', 'text-gray-900');
+        
+        mindsetTab.classList.remove('bg-blue-600', 'text-white');
+        mindsetTab.classList.add('bg-white', 'text-gray-900');
+        
+        // Show/hide content
+        nutritionContent.classList.remove('hidden');
+        fitnessContent.classList.add('hidden');
+        mindsetContent.classList.add('hidden');
+    });
+    
+    mindsetTab.addEventListener('click', function() {
+        // Update active state for tabs
+        mindsetTab.classList.add('bg-blue-600', 'text-white');
+        mindsetTab.classList.remove('bg-white', 'text-gray-900');
+        
+        fitnessTab.classList.remove('bg-blue-600', 'text-white');
+        fitnessTab.classList.add('bg-white', 'text-gray-900');
+        
+        nutritionTab.classList.remove('bg-blue-600', 'text-white');
+        nutritionTab.classList.add('bg-white', 'text-gray-900');
+        
+        // Show/hide content
+        mindsetContent.classList.remove('hidden');
+        fitnessContent.classList.add('hidden');
+        nutritionContent.classList.add('hidden');
+    });
+    
+    // Setup calendar days with improved styling and interaction
+    setupCalendarDays();
+    
+    // Show current day's workout if available, otherwise show message
+    const currentDate = new Date();
+    const currentDay = currentDate.getDate();
+    if (workoutData[currentDay.toString()]) {
+        console.log(`Showing current day (${currentDay}) workout`);
+        showWorkout(currentDay.toString());
+        
+        // Highlight the current day in the calendar
+        highlightCalendarDay(currentDay.toString());
+    } else {
+        console.log("No workout data for current day");
+        document.getElementById('selected-date').textContent = "Select a date to view workout";
+        document.getElementById('workout-content').innerHTML = 
+            '<p class="text-sm text-gray-600 dark:text-gray-300">Click on a day in the calendar to view that day\'s workout plan.</p>';
+        
+        // Initialize nutrition content with user's actual macros
+        updateNutritionContent(null);
+    }
+    
+    // Initialize advanced fitness metrics calculator
+    initAdvancedFitnessCalculator();
+});
+
+// Function to set up calendar days with improved styling and interaction
+function setupCalendarDays() {
+    const dayElements = document.querySelectorAll('.cursor-pointer p');
+    console.log("Found day elements:", dayElements.length);
+    
+    // Get current date
+    const currentDate = new Date();
+    const currentDay = currentDate.getDate();
+    console.log("Current day:", currentDay);
+    
+    // Clear any existing event listeners and styling
+    dayElements.forEach(element => {
+        const parent = element.parentElement;
+        const clone = parent.cloneNode(true);
+        parent.parentNode.replaceChild(clone, parent);
+    });
+    
+    // Re-select elements after replacing them
+    const refreshedDayElements = document.querySelectorAll('.cursor-pointer p');
+    
+    refreshedDayElements.forEach(element => {
+        const dayNum = element.textContent.trim();
+        if (!isNaN(dayNum) && parseInt(dayNum) >= 1 && parseInt(dayNum) <= 31) {
+            // Convert dayNum to string to ensure consistent comparison
+            const dayNumStr = dayNum.toString();
+            
+            // Add hover effect to all day elements
+            element.parentElement.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'transition-colors', 'duration-200');
+            
+            // If this day has a workout, highlight it
+            if (workoutData[dayNumStr]) {
+                element.parentElement.classList.add('bg-blue-500', 'dark:bg-blue-700', 'rounded-full');
+                element.classList.add('text-white');
+            }
+            
+            // If this is the current day, add a border to highlight it
+            if (parseInt(dayNum) === currentDay) {
+                element.parentElement.classList.add('ring-2', 'ring-yellow-400');
+            }
+            
+            // Add click event listener
+            element.parentElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log(`Clicked on day ${dayNumStr}`);
+                
+                // Remove selection styling from all days
+                refreshedDayElements.forEach(el => {
+                    const elParent = el.parentElement;
+                    const elDayNum = el.textContent.trim();
+                    
+                    // Remove selection styling
+                    elParent.classList.remove('bg-green-500', 'dark:bg-green-700');
+                    
+                    // Restore workout day styling if applicable
+                    if (workoutData[elDayNum] && elDayNum !== dayNumStr) {
+                        elParent.classList.add('bg-blue-500', 'dark:bg-blue-700');
+                        elParent.classList.add('rounded-full');
+                        el.classList.add('text-white');
+                    } else if (!workoutData[elDayNum]) {
+                        elParent.classList.remove('bg-blue-500', 'dark:bg-blue-700', 'rounded-full');
+                        el.classList.remove('text-white');
+                    }
+                });
+                
+                // Add selection styling to clicked day
+                element.parentElement.classList.add('bg-green-500', 'dark:bg-green-700', 'rounded-full');
+                element.classList.add('text-white');
+                
+                // Show workout for the selected day
+                showWorkout(dayNumStr);
+            });
+        }
+    });
+}
+
+// Function to highlight a specific day in the calendar
+function highlightCalendarDay(dayNum) {
+    const dayElements = document.querySelectorAll('.cursor-pointer p');
+    
+    dayElements.forEach(element => {
+        const elementDayNum = element.textContent.trim();
+        if (elementDayNum === dayNum) {
+            // Add selection styling
+            element.parentElement.classList.add('bg-green-500', 'dark:bg-green-700', 'rounded-full');
+            element.classList.add('text-white');
+            
+            // Scroll the element into view if needed
+            element.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+}
+
+// Advanced Fitness Metrics Calculator
+function initAdvancedFitnessCalculator() {
+    // Define constants for activity factors, calorie adjustments, and macro ratios
+    const activityFactors = {
+        "sedentary": 1.2,          // Little to no exercise
+        "lightly active": 1.375,   // Light exercise 1-3 days/week
+        "moderately active": 1.55, // Moderate exercise 3-5 days/week
+        "very active": 1.725,      // Hard exercise 6-7 days/week
+        "super active": 1.9        // Very hard exercise or physical job
+    };
+
+    const calorieAdjustments = {
+        "maintain": 0,    // No change to TDEE
+        "lose": -300,     // 300-calorie deficit for weight loss
+        "gain": 300       // 300-calorie surplus for weight gain
+    };
+
+    const macroRatios = {
+        "maintain": { protein: 30, carbs: 40, fats: 30 }, // 30% protein, 40% carbs, 30% fats
+        "lose": { protein: 40, carbs: 30, fats: 30 },     // 40% protein, 30% carbs, 30% fats
+        "gain": { protein: 25, carbs: 50, fats: 25 }      // 25% protein, 50% carbs, 25% fats
+    };
+    
+    // Get user data from the page
+    let gender = "{{ gender }}".toLowerCase().trim();
+    const height_m = parseFloat("{{ height_m }}");
+    const weight_kg = parseFloat("{{ weight_kg }}");
+    const goal_weight_kg = parseFloat("{{ goal_weight_kg }}");
+    const goal = "{{ goal }}".toLowerCase().trim();
+    
+    // Get age and activity level inputs
+    const ageInput = document.getElementById('age-input');
+    const activityLevelSelect = document.getElementById('activity-level');
+    const exerciseBurnInput = document.getElementById('exercise-burn');
+    const exerciseBurnValue = document.getElementById('exercise-burn-value');
+    
+    let age = parseInt(ageInput.value);
+    let activityLevel = activityLevelSelect.value;
+    let exerciseBurn = parseInt(exerciseBurnInput.value);
+    
+    // Update exercise burn value display when slider changes
+    exerciseBurnInput.addEventListener('input', function() {
+        exerciseBurn = parseInt(this.value);
+        exerciseBurnValue.textContent = `${exerciseBurn} cal`;
+        calculateWeightProgress();
+    });
+    
+    // Function to calculate days to lose or gain 1 pound based on daily calorie balance
+    function calculateDaysFor1Pound(dailyBalance, exerciseBurn) {
+        const caloriesPerPound = 3500;
+        const totalDailyDeficit = dailyBalance + exerciseBurn; // Note: exerciseBurn is negative for calorie deficit
+        
+        if (totalDailyDeficit === 0) {
+            return "N/A (maintaining weight)";
+        }
+        let days = caloriesPerPound / Math.abs(totalDailyDeficit);
+        return days.toFixed(1);
+    }
+    
+    // Function to estimate weight change over 30 days
+    function calculateWeightChange30Days(dailyBalance, exerciseBurn) {
+        const caloriesPerPound = 3500;
+        const days = 30;
+        // Total daily balance includes both goal adjustment and exercise burn
+        let totalDailyBalance = dailyBalance + exerciseBurn; // Note: exerciseBurn is negative for calorie deficit
+        let totalBalance30Days = totalDailyBalance * days;
+        let weightChangeLbs = totalBalance30Days / caloriesPerPound;
+        return weightChangeLbs;
+    }
+    
+    // Function to format weight change text
+    function formatWeightChange(weightChangeLbs) {
+        if (weightChangeLbs < 0) {
+            return `lose ${Math.abs(weightChangeLbs).toFixed(2)} lbs (${(Math.abs(weightChangeLbs) * 0.453592).toFixed(2)} kg)`;
+        } else if (weightChangeLbs > 0) {
+            return `gain ${weightChangeLbs.toFixed(2)} lbs (${(weightChangeLbs * 0.453592).toFixed(2)} kg)`;
+        } else {
+            return "maintain your weight";
+        }
+    }
+    
+    // Function to calculate and update weight progress estimates
+    function calculateWeightProgress() {
+        // Get the daily calorie balance based on fitness goal
+        let fitnessGoal = "maintain";
+        if (goal.includes("lose") || goal.includes("weight loss")) {
+            fitnessGoal = "lose";
+        } else if (goal.includes("gain") || goal.includes("muscle") || goal.includes("build")) {
+            fitnessGoal = "gain";
+        }
+        
+        let dailyBalance = calorieAdjustments[fitnessGoal];
+        // Convert exercise burn to negative for deficit calculation
+        let exerciseDeficit = -exerciseBurn;
+        
+        // Calculate days to lose or gain 1 pound based on nutrition goal and exercise
+        let daysFor1Pound = calculateDaysFor1Pound(dailyBalance, exerciseDeficit);
+        let daysText;
+        
+        if (fitnessGoal === "lose") {
+            daysText = `${daysFor1Pound} days to lose 1 lb (${Math.abs(dailyBalance)} cal diet deficit + ${exerciseBurn} cal exercise = ${Math.abs(dailyBalance + exerciseDeficit)} cal total deficit)`;
+        } else if (fitnessGoal === "gain") {
+            daysText = `${daysFor1Pound} days to gain 1 lb (${dailyBalance} cal surplus - ${exerciseBurn} cal exercise = ${dailyBalance + exerciseDeficit} cal total surplus)`;
+        } else {
+            daysText = `Exercise deficit of ${exerciseBurn} calories per day`;
+        }
+        
+        // Calculate weight change over 30 days with nutrition goal + exercise
+        let weightChangeLbs = calculateWeightChange30Days(dailyBalance, exerciseDeficit);
+        let weightChangeText = formatWeightChange(weightChangeLbs);
+        
+        // Calculate projected weight in 30 days
+        let weightChangeKg = weightChangeLbs * 0.453592; // Convert lbs to kg
+        let projectedWeight = weight_kg + weightChangeKg;
+        
+        // Update the UI with calculated values
+        document.getElementById('days-for-pound').textContent = daysText;
+        document.getElementById('thirty-day-progress').textContent = `You will ${weightChangeText} in 30 days`;
+        document.getElementById('projected-weight').textContent = `${projectedWeight.toFixed(1)} kg (${(projectedWeight * 2.20462).toFixed(1)} lbs)`;
+        
+        // Update progress visualization
+        updateProgressVisualization(weight_kg, goal_weight_kg, projectedWeight);
+    }
+    
+    // Function to update the progress visualization
+    function updateProgressVisualization(currentWeight, goalWeight, projectedWeight) {
+        // Calculate total weight change needed
+        const totalChangeNeeded = Math.abs(goalWeight - currentWeight);
+        
+        // Calculate progress percentage
+        let progressPercentage = 0;
+        
+        if (totalChangeNeeded > 0) {
+            // If losing weight: current > goal
+            if (currentWeight > goalWeight) {
+                // Progress is how much weight has been lost toward goal
+                const projectedLoss = currentWeight - projectedWeight;
+                progressPercentage = (projectedLoss / totalChangeNeeded) * 100;
+            } 
+            // If gaining weight: current < goal
+            else if (currentWeight < goalWeight) {
+                // Progress is how much weight has been gained toward goal
+                const projectedGain = projectedWeight - currentWeight;
+                progressPercentage = (projectedGain / totalChangeNeeded) * 100;
+            }
+        }
+        
+        // Ensure percentage is between 0 and 100
+        progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+        
+        // Update progress bar
+        const progressIndicator = document.getElementById('progress-indicator');
+        progressIndicator.style.width = `${progressPercentage}%`;
+        
+        // Change color based on progress
+        if (progressPercentage < 25) {
+            progressIndicator.classList.remove('bg-yellow-500', 'bg-green-500');
+            progressIndicator.classList.add('bg-blue-500');
+        } else if (progressPercentage < 75) {
+            progressIndicator.classList.remove('bg-blue-500', 'bg-green-500');
+            progressIndicator.classList.add('bg-yellow-500');
+        } else {
+            progressIndicator.classList.remove('bg-blue-500', 'bg-yellow-500');
+            progressIndicator.classList.add('bg-green-500');
+        }
+    }
+    
+    // Function to calculate and update metrics
+    function calculateMetrics() {
+        // Get current values
+        age = parseInt(ageInput.value);
+        activityLevel = activityLevelSelect.value;
+        
+        // Convert height to cm for BMR calculation
+        const height_cm = height_m * 100;
+        
+        // Calculate BMI (already displayed on the page)
+        const bmi = weight_kg / (height_m * height_m);
+        
+        // Calculate BMR (Basal Metabolic Rate) using Mifflin-St. Jeor equation
+        let bmr;
+        if (gender === "male") {
+            bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age + 5;
+        } else { // Assume female if not male
+            bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age - 161;
+        }
+
+        // Calculate TDEE (Total Daily Energy Expenditure)
+        // Formula: BMR * activity factor
+        let tdee = bmr * activityFactors[activityLevel];
+
+        // Determine fitness goal category (lose, maintain, gain)
+        let fitnessGoal = "maintain";
+        if (goal.includes("lose") || goal.includes("weight loss")) {
+            fitnessGoal = "lose";
+        } else if (goal.includes("gain") || goal.includes("muscle") || goal.includes("build")) {
+            fitnessGoal = "gain";
+        }
+
+        // Calculate recommended calorie intake based on fitness goal
+        let calorieIntake = tdee + calorieAdjustments[fitnessGoal];
+
+        // Ensure minimum safe calorie intake
+        const minCalories = gender === "male" ? 1500 : 1200;
+        calorieIntake = Math.max(calorieIntake, minCalories);
+
+        // Calculate macronutrients based on calorie intake and macro ratios
+        let ratios = macroRatios[fitnessGoal];
+        let proteinCalories = calorieIntake * (ratios.protein / 100);
+        let proteinGrams = proteinCalories / 4; // 4 calories per gram of protein
+        let carbsCalories = calorieIntake * (ratios.carbs / 100);
+        let carbsGrams = carbsCalories / 4;     // 4 calories per gram of carbs
+        let fatsCalories = calorieIntake * (ratios.fats / 100);
+        let fatsGrams = fatsCalories / 9;       // 9 calories per gram of fat
+        
+        // Update the UI with calculated values
+        document.getElementById('bmr-value').textContent = `${Math.round(bmr)} calories/day`;
+        document.getElementById('tdee-value').textContent = `${Math.round(tdee)} calories/day`;
+        document.getElementById('calorie-value').textContent = `${Math.round(calorieIntake)} calories/day`;
+        
+        // Update macronutrient values and progress bars
+        document.getElementById('protein-value').textContent = `${Math.round(proteinGrams)}g (${ratios.protein}%)`;
+        document.getElementById('protein-bar').style.width = `${ratios.protein}%`;
+        
+        document.getElementById('carbs-value').textContent = `${Math.round(carbsGrams)}g (${ratios.carbs}%)`;
+        document.getElementById('carbs-bar').style.width = `${ratios.carbs}%`;
+        
+        document.getElementById('fats-value').textContent = `${Math.round(fatsGrams)}g (${ratios.fats}%)`;
+        document.getElementById('fats-bar').style.width = `${ratios.fats}%`;
+        
+        // Calculate weight progress estimates
+        calculateWeightProgress();
+        
+        console.log("Advanced fitness metrics calculated:", {
+            bmr: Math.round(bmr),
+            tdee: Math.round(tdee),
+            calorieIntake: Math.round(calorieIntake),
+            macros: {
+                protein: Math.round(proteinGrams),
+                carbs: Math.round(carbsGrams),
+                fats: Math.round(fatsGrams)
+            }
+        });
+    }
+    
+    // Add event listeners
+    activityLevelSelect.addEventListener('change', calculateMetrics);
+    ageInput.addEventListener('change', calculateMetrics);
+    ageInput.addEventListener('input', calculateMetrics);
+    
+    // Calculate metrics on initialization
+    calculateMetrics();
+}
+</script>
+</body>
+</html>

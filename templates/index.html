@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitKit - Your Personal Fitness Journey</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Base Styles & Background */
+    body {
+      background: linear-gradient(135deg, #f6f9fc, #e9eff5);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Progress Bar Styles */
+    #progress-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .progress-node {
+      width: 2rem;
+      height: 2rem;
+      background: #d1d5db; /* Tailwind gray-300 */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .progress-line {
+      flex-grow: 1;
+      height: 0.25rem;
+      background: #d1d5db;
+      margin: 0 0.25rem;
+      transition: background 0.3s ease;
+    }
+
+    /* Card Container & General Card Styling */
+    .bg-white {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Multi-Step Card Transitions */
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    /* Navigation Button Hover Effects */
+    button {
+      transition: background 0.3s ease, opacity 0.3s ease;
+    }
+
+    button:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen" x-data="formData()">
+    <form id="fitnessForm" class="max-w-4xl mx-auto p-6" @submit.prevent="submitForm">
+      <!-- Basic Information -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Basic Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="gender" class="block mb-2">Gender</label>
+            <select id="gender" name="gender" class="w-full p-2 border rounded" x-model="formData.gender" required>
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="age" class="block mb-2">Age</label>
+            <input type="number" id="age" name="age" 
+                   min="18" max="100" class="w-full p-2 border rounded" 
+                   x-model="formData.age"
+                   required>
+          </div>
+
+          <div>
+            <label class="block mb-2">Height</label>
+            <div class="flex gap-2">
+              <div>
+                <input type="number" id="height_feet" name="height_feet" 
+                       min="4" max="8" class="w-full p-2 border rounded" 
+                       x-model="formData.height_feet"
+                       required>
+                <label for="height_feet" class="text-sm text-gray-600">Feet</label>
+              </div>
+              <div>
+                <input type="number" id="height_inches" name="height_inches" 
+                       min="0" max="11" class="w-full p-2 border rounded"
+                       x-model="formData.height_inches"
+                       required>
+                <label for="height_inches" class="text-sm text-gray-600">Inches</label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="activity_level" class="block mb-2">Activity Level</label>
+            <select id="activity_level" name="activity_level" class="w-full p-2 border rounded" x-model="formData.activity_level" required>
+              <option value="">Select activity level</option>
+              <option value="sedentary">Sedentary (Little to no exercise)</option>
+              <option value="lightly active">Lightly Active (1-3 days/week)</option>
+              <option value="moderately active">Moderately Active (3-5 days/week)</option>
+              <option value="very active">Very Active (6-7 days/week)</option>
+              <option value="super active">Super Active (Very hard exercise/physical job)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="exercise_environment" class="block mb-2">Exercise Environment</label>
+            <select id="exercise_environment" name="exercise_environment" class="w-full p-2 border rounded" x-model="formData.exercise_environment" required>
+              <option value="">Select environment</option>
+              <option value="gym">Gym</option>
+              <option value="home">Home</option>
+              <option value="both">Both (Gym & Home)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block mb-2">Your Goal</label>
+          <div class="space-y-2">
+            <label class="flex items-center">
+              <input type="radio" id="weight_loss" name="goal" value="weight_loss" 
+                     class="mr-2" x-model="formData.goal" required>
+              <span>Weight Loss</span>
+            </label>
+            <label class="flex items-center">
+              <input type="radio" id="muscle_gain" name="goal" value="muscle_gain" 
+                     class="mr-2" x-model="formData.goal">
+              <span>Muscle Gain</span>
+            </label>
+            <label class="flex items-center">
+              <input type="radio" id="maintenance" name="goal" value="maintenance" 
+                     class="mr-2" x-model="formData.goal">
+              <span>Maintenance</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight Information -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Weight Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="weight_lbs" class="block mb-2">Current Weight (lbs)</label>
+            <input type="number" id="weight_lbs" name="weight_lbs" 
+                   class="w-full p-2 border rounded" x-model="formData.weight_lbs"
+                   required>
+          </div>
+          <div>
+            <label for="goal_weight_lbs" class="block mb-2">Goal Weight (lbs)</label>
+            <input type="number" id="goal_weight_lbs" name="goal_weight_lbs" 
+                   class="w-full p-2 border rounded" x-model="formData.goal_weight_lbs"
+                   required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit" 
+                class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition">
+          Create My Plan
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function formData() {
+      return {
+        formData: {
+          gender: '',
+          age: '',
+          height_feet: '',
+          height_inches: '',
+          activity_level: '',
+          exercise_environment: '',
+          goal: '',
+          weight_lbs: '',
+          goal_weight_lbs: '',
+        },
+        async submitForm() {
+          try {
+            const response = await fetch('/submit-form', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(this.formData)
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.stream_url) {
+                window.location.href = '/review';
+              } else {
+                throw new Error('Invalid response format');
+              }
+            } else {
+              throw new Error('Form submission failed');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('There was an error submitting the form. Please try again.');
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

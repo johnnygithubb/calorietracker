@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review - FitKit</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="container mx-auto p-6 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-6 text-center">Your Fitness Analysis</h1>
+    
+    <!-- Display BMI -->
+    <div class="mb-6 text-center">
+      <h2 class="text-xl font-semibold">Your BMI: {{ bmi | round(1) }}</h2>
+    </div>
+
+    <!-- Reasoning / Analysis Container -->
+    <div id="reasoning-container" class="bg-white p-6 rounded-lg shadow-md">
+      
+      <!-- "Thinking" indicator at the top -->
+      <div id="thinking-indicator" class="flex items-center justify-center p-4 bg-blue-50 rounded-md mb-4">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+        <span class="ml-2 text-blue-700 font-medium">
+          Thinking... Generating your analysis
+        </span>
+      </div>
+
+      <!-- Scrolling text area with fade top & bottom -->
+      <div class="relative h-64 overflow-hidden border border-gray-200 rounded">
+        <div id="content-area" class="prose overflow-y-auto h-full p-4"></div>
+        
+        <!-- Fade overlay at the top -->
+        <div class="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-white to-transparent pointer-events-none"></div>
+        
+        <!-- Fade overlay at the bottom -->
+        <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+      </div>
+    </div>
+
+    <!-- Button to view plan (initially hidden) -->
+    <div class="mt-6 text-center">
+      <button id="view-plan-btn" class="hidden bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+        View Your Plan
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const contentArea = document.getElementById('content-area');
+      const thinkingIndicator = document.getElementById('thinking-indicator');
+      const viewPlanBtn = document.getElementById('view-plan-btn');
+      
+      // Connect to your SSE endpoint
+      const eventSource = new EventSource('/stream-updates');
+
+      eventSource.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        // If there's an error, show it and stop
+        if (data.error) {
+          thinkingIndicator.classList.add('hidden');
+          contentArea.innerHTML = `<div class="text-red-500">Error: ${data.error}</div>`;
+          eventSource.close();
+          return;
+        }
+
+        // As soon as we get reasoning text, hide "thinking" and show it
+        if (data.reasoning) {
+          thinkingIndicator.classList.add('hidden');
+          contentArea.innerHTML = marked.parse(data.reasoning);
+          // Scroll to bottom so user sees the newest text
+          contentArea.scrollTop = contentArea.scrollHeight;
+        }
+
+        // If complete, show the button to view the plan
+        if (data.complete && data.redirect) {
+          eventSource.close();
+          viewPlanBtn.classList.remove('hidden');
+          viewPlanBtn.addEventListener('click', () => {
+            window.location.href = data.redirect;
+          });
+        }
+      };
+
+      eventSource.onerror = function() {
+        thinkingIndicator.classList.add('hidden');
+        contentArea.innerHTML = '<div class="text-red-500">Connection error. Please try again.</div>';
+        eventSource.close();
+      };
+    });
+  </script>
+</body>
+</html>

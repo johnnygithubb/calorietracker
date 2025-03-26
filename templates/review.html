@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review - FitKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        #content-area {
+            padding-bottom: 4rem; /* Increased padding to ensure text isn't hidden */
+            white-space: pre-wrap; /* Preserve whitespace and wrapping */
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        #content-area::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        
+        /* Debug info styling */
+        #debug-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 400px;
+            max-height: 200px;
+            overflow: auto;
+            z-index: 1000;
+        }
+        
+        /* Animation for fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-6 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-6 text-center">Your Fitness Analysis</h1>
+        
+        <!-- Advanced Fitness Metrics -->
+        <div class="mb-6 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Advanced Fitness Metrics</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">BMI (Body Mass Index)</p>
+                    <p class="text-lg font-medium">{{ bmi | round(1) }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">BMR (Basal Metabolic Rate)</p>
+                    <p id="bmr-value" class="text-lg font-medium">Calculating...</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">TDEE (Total Daily Energy Expenditure)</p>
+                    <p id="tdee-value" class="text-lg font-medium">Calculating...</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Recommended Calorie Intake</p>
+                    <p id="calorie-value" class="text-lg font-medium">Calculating...</p>
+                </div>
+            </div>
+            
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <!-- Age Input -->
+                <div>
+                    <label for="age-input" class="block text-sm font-medium text-gray-500">Age</label>
+                    <input type="number" id="age-input" value="{{ age }}" min="18" max="100" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                </div>
+                
+                <!-- Activity Level Selector -->
+                <div>
+                    <label for="activity-level" class="block text-sm font-medium text-gray-500">Activity Level</label>
+                    <select id="activity-level" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="sedentary" {% if activity_level == 'sedentary' %}selected{% endif %}>Sedentary</option>
+                        <option value="lightly active" {% if activity_level == 'lightly active' %}selected{% endif %}>Lightly Active</option>
+                        <option value="moderately active" {% if activity_level == 'moderately active' %}selected{% endif %}>Moderately Active</option>
+                        <option value="very active" {% if activity_level == 'very active' %}selected{% endif %}>Very Active</option>
+                        <option value="super active" {% if activity_level == 'super active' %}selected{% endif %}>Super Active</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Macronutrient Breakdown -->
+        <div class="mb-6 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Macronutrient Breakdown</h2>
+            <div class="bg-gray-100 rounded-lg p-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-500">Protein</span>
+                    <span id="protein-value" class="text-sm">Calculating...</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div id="protein-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-500">Carbohydrates</span>
+                    <span id="carbs-value" class="text-sm">Calculating...</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div id="carbs-bar" class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-500">Fats</span>
+                    <span id="fats-value" class="text-sm">Calculating...</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="fats-bar" class="bg-yellow-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Weight Progress Estimation -->
+        <div class="mb-6 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Weight Progress Estimation</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <div class="mb-4">
+                        <label for="exercise-burn" class="block text-sm font-medium text-gray-500 mb-2">
+                            Daily Exercise Calorie Burn
+                        </label>
+                        <div class="flex items-center">
+                            <input type="range" id="exercise-burn" min="0" max="1000" value="300" step="50" 
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <span id="exercise-burn-value" class="ml-3 text-sm font-medium min-w-[70px]">300 cal</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 mt-6">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Days to Lose/Gain 1 Pound</p>
+                            <p id="days-for-pound" class="text-lg font-medium">Calculating...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Estimated 30-Day Progress</p>
+                            <p id="thirty-day-progress" class="text-lg font-medium">Calculating...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Projected Weight in 30 Days</p>
+                            <p id="projected-weight" class="text-lg font-medium">Calculating...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Visualization -->
+                <div class="flex flex-col justify-center">
+                    <div class="bg-gray-100 rounded-lg p-4 h-full flex flex-col justify-center">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium">Current: {{ weight_kg | round(1) }} kg</span>
+                            <span class="text-sm font-medium">Goal: {{ goal_weight_kg | round(1) }} kg</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4 mb-2 relative">
+                            <div id="progress-indicator" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Start</span>
+                            <span>Progress</span>
+                            <span>Goal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Fitness Metrics -->
+        <div class="mb-6 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Additional Fitness Metrics</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Column -->
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Daily Water Intake</p>
+                        <p id="water-intake" class="text-lg font-medium">Calculating...</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Lean Body Mass (LBM)</p>
+                        <p id="lean-body-mass" class="text-lg font-medium">Calculating...</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Maximum Heart Rate</p>
+                        <p id="max-heart-rate" class="text-lg font-medium">Calculating...</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Heart Rate Zones</p>
+                        <div class="space-y-2 mt-2">
+                            <div>
+                                <span class="text-sm text-gray-500">Fat Burning:</span>
+                                <span id="fat-burning-zone" class="ml-2">Calculating...</span>
+                            </div>
+                            <div>
+                                <span class="text-sm text-gray-500">Cardio:</span>
+                                <span id="cardio-zone" class="ml-2">Calculating...</span>
+                            </div>
+                            <div>
+                                <span class="text-sm text-gray-500">Peak:</span>
+                                <span id="peak-zone" class="ml-2">Calculating...</span>
+                            </div>
+                        </div>
+                        <p id="heart-rate-note" class="text-sm text-blue-600 mt-2"></p>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Energy Availability</p>
+                        <p id="energy-availability" class="text-lg font-medium">Calculating...</p>
+                        <p id="energy-availability-note" class="text-sm text-blue-600 mt-1"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Recommended Protein Intake</p>
+                        <p id="protein-recommendation" class="text-lg font-medium">Calculating...</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Caloric Expenditure Calculator</p>
+                        <div class="mt-2 space-y-2">
+                            <select id="activity-type" class="w-full p-2 border rounded text-sm">
+                                <option value="walking">Walking (3 mph)</option>
+                                <option value="running">Running (6 mph)</option>
+                                <option value="cycling">Cycling (moderate)</option>
+                                <option value="strength training">Strength Training</option>
+                            </select>
+                            <input type="number" id="activity-duration" placeholder="Duration (hours)" class="w-full p-2 border rounded text-sm" step="0.25" min="0" max="24">
+                            <p id="calories-burned" class="text-base font-medium mt-2">Enter duration to calculate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reasoning-container" class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-center">Generating Personal Fitness Program</h2>
+            <div id="loading-indicator" class="flex flex-col items-center justify-center mb-4">
+                <div id="loader-spinner" class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <div id="loader-checkmark" class="hidden text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <span class="mt-2 text-gray-600">Analyzing your data and creating your program...</span>
+            </div>
+            <div class="relative h-64 overflow-hidden">
+                <div id="content-area" class="prose overflow-y-auto h-full"></div>
+                <div class="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-white to-transparent pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+            </div>
+        </div>
+        
+        <!-- Upsell Card -->
+        <div id="upsell-card" class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-lg shadow-md text-white hidden">
+            <h2 class="text-xl font-bold mb-4">Upgrade to Premium for Full Access</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h3 class="font-semibold mb-2">Premium Benefits:</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Detailed workout instructions with video guides</li>
+                        <li>Personalized meal plans with recipes</li>
+                        <li>Progress tracking and analytics</li>
+                        <li>Access to all workout programs</li>
+                        <li>One-on-one coaching sessions</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Track Your Progress:</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Log workouts and track performance</li>
+                        <li>Monitor nutrition and calorie intake</li>
+                        <li>Set and achieve fitness milestones</li>
+                        <li>Sync with fitness devices and apps</li>
+                        <li>Weekly progress reports and insights</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="/premium" class="inline-block bg-white text-indigo-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition duration-300">
+                    Unlock Premium Features
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Debug info panel -->
+    <div id="debug-info" class=""></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentArea = document.getElementById('content-area');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const loaderSpinner = document.getElementById('loader-spinner');
+            const loaderCheckmark = document.getElementById('loader-checkmark');
+            const viewPlanBtn = document.getElementById('view-plan-btn');
+            const upsellCard = document.getElementById('upsell-card');
+            const debugInfo = document.getElementById('debug-info');
+            const eventSource = new EventSource('/stream-updates');
+            
+            // Keep track of the full text
+            let fullReasoningText = "";
+            let redirectUrl = "";
+            
+            // Show debug panel with keyboard shortcut (Ctrl+Shift+D)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                    debugInfo.classList.toggle('hidden');
+                }
+            });
+            
+            // Function to update debug info
+            function updateDebugInfo(text, planText = '') {
+                debugInfo.innerHTML = `
+                    <div>Reasoning Text Length: ${text.length}</div>
+                    <div>Last 50 chars of reasoning: "${text.slice(-50)}"</div>
+                    ${planText ? `<div>Plan Text Length: ${planText.length}</div>
+                    <div>Plan first 100 chars: "${planText.substring(0, 100)}"</div>
+                    <div>Plan last 100 chars: "${planText.slice(-100)}"</div>` : ''}
+                    <div>Full reasoning text (truncated to 500 chars):</div>
+                    <pre>${text.length > 500 ? text.substring(0, 200) + '...' + text.substring(text.length - 300) : text}</pre>
+                `;
+            }
+            
+            // Function to ensure smooth scrolling to the bottom with multiple attempts
+            function scrollToBottom() {
+                // Initial scroll
+                contentArea.scrollTop = contentArea.scrollHeight;
+                
+                // Schedule additional scrolls to ensure content is visible
+                setTimeout(() => {
+                    contentArea.scrollTop = contentArea.scrollHeight;
+                    
+                    // One more time after DOM has fully updated
+                    requestAnimationFrame(() => {
+                        contentArea.scrollTop = contentArea.scrollHeight;
+                    });
+                }, 50);
+                
+                // Final check after everything has settled
+                setTimeout(() => {
+                    contentArea.scrollTop = contentArea.scrollHeight;
+                }, 200);
+            }
+            
+            // Function to update content with fallback options
+            function updateContent(text) {
+                try {
+                    // Try using marked first
+                    contentArea.innerHTML = marked.parse(text);
+                } catch (e) {
+                    console.error("Error parsing with marked:", e);
+                    // Fallback to direct HTML with basic formatting
+                    contentArea.innerHTML = text
+                        .replace(/\n\n/g, '<br><br>')
+                        .replace(/\n/g, '<br>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                }
+                scrollToBottom();
+            }
+
+            eventSource.onmessage = function(e) {
+                // Log the raw event data
+                console.log("Raw SSE data received:", e.data);
+                
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.error) {
+                        loadingIndicator.classList.add('hidden');
+                        contentArea.innerHTML = `<div class="text-red-500">Error: ${data.error}</div>`;
+                        eventSource.close();
+                        return;
+                    }
+                    if (data.reasoning) {
+                        loadingIndicator.classList.add('hidden');
+                        
+                        // Store the full text
+                        fullReasoningText = data.reasoning;
+                        
+                        // Detailed logging
+                        console.log("FULL REASONING TEXT:");
+                        console.log(fullReasoningText);
+                        console.log("Text length:", fullReasoningText.length);
+                        console.log("Last 50 characters:", fullReasoningText.slice(-50));
+                        
+                        // Check if text contains specific markers that might indicate truncation
+                        if (fullReasoningText.includes('adherenc') && !fullReasoningText.includes('adherence')) {
+                            console.warn("POSSIBLE TRUNCATION DETECTED: Text contains 'adherenc' but not 'adherence'");
+                        }
+                        
+                        // Update debug info
+                        updateDebugInfo(fullReasoningText);
+                        
+                        // Update the content with our custom function
+                        updateContent(fullReasoningText);
+                    }
+                    if (data.complete && data.redirect) {
+                        eventSource.close();
+                        redirectUrl = data.redirect;
+                        
+                        console.log("FINAL COMPLETE TEXT:");
+                        console.log(fullReasoningText);
+                        console.log("Final text length:", fullReasoningText.length);
+                        
+                        // Final update to ensure everything is visible
+                        updateContent(fullReasoningText);
+                        scrollToBottom();
+                        
+                        // Log the redirect URL for debugging
+                        console.log("Redirect URL:", data.redirect);
+                        
+                        // Show checkmark instead of spinner
+                        loaderSpinner.classList.add('hidden');
+                        loaderCheckmark.classList.remove('hidden');
+                        
+                        // Show upsell card with animation
+                        setTimeout(() => {
+                            upsellCard.classList.remove('hidden');
+                            upsellCard.classList.add('animate-fade-in');
+                        }, 1000);
+                        
+                        // Add event listener for the upsell button
+                        document.querySelector('#upsell-card a').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            console.log("Upsell button clicked, redirecting to:", redirectUrl);
+                            window.location.href = redirectUrl;
+                        });
+                        
+                        // Log that we're ready to show the plan
+                        console.log("Analysis complete - Upsell card is now visible");
+                    }
+                } catch (error) {
+                    console.error("Error processing SSE message:", error, "Raw data:", e.data);
+                }
+            };
+
+            eventSource.onerror = function() {
+                loadingIndicator.classList.add('hidden');
+                contentArea.innerHTML = '<div class="text-red-500">Connection error. Please try again.</div>';
+                eventSource.close();
+            };
+        });
+    </script>
+    
+    <!-- Advanced Fitness Metrics Calculator Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Define constants for activity factors, calorie adjustments, and macro ratios
+            const activityFactors = {
+                "sedentary": 1.2,
+                "lightly active": 1.375,
+                "moderately active": 1.55,
+                "very active": 1.725,
+                "super active": 1.9
+            };
+
+            const calorieAdjustments = {
+                "maintain": 0,
+                "lose": -500,
+                "gain": 500
+            };
+
+            const macroRatios = {
+                "maintain": { protein: 30, carbs: 40, fats: 30 },
+                "lose": { protein: 40, carbs: 30, fats: 30 },
+                "gain": { protein: 25, carbs: 50, fats: 25 }
+            };
+            
+            // Get user data from the page
+            let gender = "{{ gender }}".toLowerCase().trim();
+            const height_m = parseFloat("{{ height_m }}");
+            const weight_kg = parseFloat("{{ weight_kg }}");
+            const goal_weight_kg = parseFloat("{{ goal_weight_kg }}");
+            const goal = "{{ goal }}".toLowerCase().trim();
+            
+            // Get age and activity level inputs
+            const ageInput = document.getElementById('age-input');
+            const activityLevelSelect = document.getElementById('activity-level');
+            const exerciseBurnInput = document.getElementById('exercise-burn');
+            const exerciseBurnValue = document.getElementById('exercise-burn-value');
+            
+            let age = parseInt(ageInput.value);
+            let activityLevel = activityLevelSelect.value;
+            let exerciseBurn = parseInt(exerciseBurnInput.value);
+            
+            // Helper functions for calculations
+            function calculateWaterIntake(weight, activityLevel, fitnessGoal) {
+                const baseIntake = 0.033 * weight;
+                const activityHours = {
+                    'sedentary': 0,
+                    'lightly active': 0.5,
+                    'moderately active': 1,
+                    'very active': 1.5,
+                    'super active': 2
+                };
+                const exerciseHours = activityHours[activityLevel] || 0;
+                const extraWater = 0.4 * exerciseHours;
+                
+                let totalWater = baseIntake + extraWater;
+                if (fitnessGoal === 'lose') totalWater += 0.2;
+                else if (fitnessGoal === 'gain') totalWater += 0.1;
+                
+                return totalWater.toFixed(1);
+            }
+
+            function calculateLBM(weight, height, gender) {
+                if (gender === 'male') {
+                    return (0.407 * weight + 0.267 * height - 19.2).toFixed(1);
+                } else {
+                    return (0.252 * weight + 0.473 * height - 48.3).toFixed(1);
+                }
+            }
+
+            function calculateMHR(age) {
+                return 206.9 - (0.67 * age);
+            }
+
+            function calculateHeartRateZones(mhr, fitnessGoal) {
+                const zones = {
+                    fatBurning: [0.5 * mhr, 0.6 * mhr],
+                    cardio: [0.6 * mhr, 0.8 * mhr],
+                    peak: [0.8 * mhr, 0.9 * mhr]
+                };
+                
+                let emphasis = '';
+                if (fitnessGoal === 'lose') emphasis = 'Focus on Fat Burning zone for weight loss.';
+                else if (fitnessGoal === 'maintain') emphasis = 'Cardio zone is ideal for maintenance.';
+                else if (fitnessGoal === 'gain') emphasis = 'Peak zone supports muscle building.';
+                
+                return { zones, emphasis };
+            }
+
+            function calculateEnergyAvailability(tdee, fitnessGoal, lbm, exerciseCalories) {
+                let calorieIntake = tdee + calorieAdjustments[fitnessGoal];
+                const ea = ((calorieIntake - exerciseCalories) / lbm).toFixed(1);
+                return {
+                    ea,
+                    note: `Healthy EA: >30 kcal/kg for women, >40 kcal/kg for men. Current: ${ea} kcal/kg`
+                };
+            }
+
+            function calculateProteinIntake(weight, activityLevel, fitnessGoal) {
+                const multipliers = {
+                    'sedentary': { 'lose': 1.2, 'maintain': 0.8, 'gain': 1.4 },
+                    'lightly active': { 'lose': 1.4, 'maintain': 1.0, 'gain': 1.6 },
+                    'moderately active': { 'lose': 1.6, 'maintain': 1.2, 'gain': 1.8 },
+                    'very active': { 'lose': 1.8, 'maintain': 1.4, 'gain': 2.0 },
+                    'super active': { 'lose': 2.0, 'maintain': 1.6, 'gain': 2.2 }
+                };
+                const multiplier = multipliers[activityLevel][fitnessGoal] || 1.2;
+                return (multiplier * weight).toFixed(0);
+            }
+
+            function calculateCaloricExpenditure(weight, activity, duration) {
+                const metValues = {
+                    'walking': 3.3,
+                    'running': 9.8,
+                    'cycling': 6.0,
+                    'strength training': 5.0
+                };
+                let met = metValues[activity.toLowerCase()] || 0;
+                return (met * weight * duration).toFixed(0);
+            }
+
+            // Function to calculate all metrics
+            function calculateMetrics() {
+                age = parseInt(ageInput.value);
+                activityLevel = activityLevelSelect.value;
+                exerciseBurn = parseInt(exerciseBurnInput.value);
+                
+                // Convert height to cm for BMR calculation
+                const height_cm = height_m * 100;
+                
+                // Calculate BMR using Mifflin-St. Jeor equation
+                let bmr;
+                if (gender === "male") {
+                    bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age + 5;
+                } else {
+                    bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age - 161;
+                }
+
+                // Calculate TDEE
+                let tdee = bmr * activityFactors[activityLevel];
+
+                // Determine fitness goal category
+                let fitnessGoal = "maintain";
+                if (goal.includes("lose") || goal.includes("weight loss")) {
+                    fitnessGoal = "lose";
+                } else if (goal.includes("gain") || goal.includes("muscle") || goal.includes("build")) {
+                    fitnessGoal = "gain";
+                }
+
+                // Calculate recommended calorie intake
+                let calorieIntake = tdee + calorieAdjustments[fitnessGoal];
+                const minCalories = gender === "male" ? 1500 : 1200;
+                calorieIntake = Math.max(calorieIntake, minCalories);
+
+                // Calculate macronutrients
+                let ratios = macroRatios[fitnessGoal];
+                let proteinCalories = calorieIntake * (ratios.protein / 100);
+                let proteinGrams = proteinCalories / 4;
+                let carbsCalories = calorieIntake * (ratios.carbs / 100);
+                let carbsGrams = carbsCalories / 4;
+                let fatsCalories = calorieIntake * (ratios.fats / 100);
+                let fatsGrams = fatsCalories / 9;
+
+                // Calculate new metrics
+                const waterIntake = calculateWaterIntake(weight_kg, activityLevel, fitnessGoal);
+                const lbm = calculateLBM(weight_kg, height_cm, gender);
+                const mhr = calculateMHR(age);
+                const heartRateZones = calculateHeartRateZones(mhr, fitnessGoal);
+                const energyAvailability = calculateEnergyAvailability(tdee, fitnessGoal, lbm, exerciseBurn);
+                const proteinIntake = calculateProteinIntake(weight_kg, activityLevel, fitnessGoal);
+
+                // Update UI with all metrics
+                document.getElementById('bmr-value').textContent = `${Math.round(bmr)} calories/day`;
+                document.getElementById('tdee-value').textContent = `${Math.round(tdee)} calories/day`;
+                document.getElementById('calorie-value').textContent = `${Math.round(calorieIntake)} calories/day`;
+                
+                document.getElementById('protein-value').textContent = `${Math.round(proteinGrams)}g (${ratios.protein}%)`;
+                document.getElementById('protein-bar').style.width = `${ratios.protein}%`;
+                
+                document.getElementById('carbs-value').textContent = `${Math.round(carbsGrams)}g (${ratios.carbs}%)`;
+                document.getElementById('carbs-bar').style.width = `${ratios.carbs}%`;
+                
+                document.getElementById('fats-value').textContent = `${Math.round(fatsGrams)}g (${ratios.fats}%)`;
+                document.getElementById('fats-bar').style.width = `${ratios.fats}%`;
+
+                // Update new metrics UI
+                document.getElementById('water-intake').textContent = `${waterIntake} liters per day`;
+                document.getElementById('lean-body-mass').textContent = `${lbm} kg`;
+                document.getElementById('max-heart-rate').textContent = `${Math.round(mhr)} bpm`;
+                document.getElementById('fat-burning-zone').textContent = 
+                    `${Math.round(heartRateZones.zones.fatBurning[0])}-${Math.round(heartRateZones.zones.fatBurning[1])} bpm`;
+                document.getElementById('cardio-zone').textContent = 
+                    `${Math.round(heartRateZones.zones.cardio[0])}-${Math.round(heartRateZones.zones.cardio[1])} bpm`;
+                document.getElementById('peak-zone').textContent = 
+                    `${Math.round(heartRateZones.zones.peak[0])}-${Math.round(heartRateZones.zones.peak[1])} bpm`;
+                document.getElementById('heart-rate-note').textContent = heartRateZones.emphasis;
+                document.getElementById('energy-availability').textContent = `${energyAvailability.ea} kcal/kg LBM`;
+                document.getElementById('energy-availability-note').textContent = energyAvailability.note;
+                document.getElementById('protein-recommendation').textContent = `${proteinIntake} grams per day`;
+
+                // Calculate weight progress
+                calculateWeightProgress();
+            }
+
+            // Function to calculate weight progress
+            function calculateWeightProgress() {
+                let fitnessGoal = "maintain";
+                if (goal.includes("lose") || goal.includes("weight loss")) {
+                    fitnessGoal = "lose";
+                } else if (goal.includes("gain") || goal.includes("muscle") || goal.includes("build")) {
+                    fitnessGoal = "gain";
+                }
+                
+                let dailyBalance = calorieAdjustments[fitnessGoal];
+                
+                // Calculate days to lose or gain 1 pound based on nutrition goal alone
+                let daysFor1Pound = calculateDaysFor1Pound(dailyBalance);
+                let daysText;
+                
+                if (fitnessGoal === "lose") {
+                    daysText = `${daysFor1Pound} days to lose 1 lb (nutrition only)`;
+                } else if (fitnessGoal === "gain") {
+                    daysText = `${daysFor1Pound} days to gain 1 lb (nutrition only)`;
+                } else {
+                    daysText = "Maintaining weight (no change expected)";
+                }
+                
+                // Calculate weight change over 30 days with nutrition goal + exercise
+                let weightChangeLbs = calculateWeightChange30Days(dailyBalance, exerciseBurn);
+                let weightChangeText = formatWeightChange(weightChangeLbs);
+                
+                // Calculate projected weight in 30 days
+                let weightChangeKg = weightChangeLbs * 0.453592; // Convert lbs to kg
+                let projectedWeight = weight_kg + weightChangeKg;
+                
+                // Update the UI with calculated values
+                document.getElementById('days-for-pound').textContent = daysText;
+                document.getElementById('thirty-day-progress').textContent = `You will ${weightChangeText} in 30 days`;
+                document.getElementById('projected-weight').textContent = `${projectedWeight.toFixed(1)} kg (${(projectedWeight * 2.20462).toFixed(1)} lbs)`;
+                
+                // Update progress visualization
+                updateProgressVisualization(weight_kg, goal_weight_kg, projectedWeight);
+            }
+
+            // Helper functions for weight progress calculations
+            function calculateDaysFor1Pound(dailyBalance) {
+                const caloriesPerPound = 3500;
+                if (dailyBalance === 0) {
+                    return "N/A (maintaining weight)";
+                }
+                let days = caloriesPerPound / Math.abs(dailyBalance);
+                return days.toFixed(1);
+            }
+
+            function calculateWeightChange30Days(dailyBalance, exerciseBurn) {
+                const caloriesPerPound = 3500;
+                const days = 30;
+                let totalDailyBalance = dailyBalance - exerciseBurn;
+                let totalBalance30Days = totalDailyBalance * days;
+                return totalBalance30Days / caloriesPerPound;
+            }
+
+            function formatWeightChange(weightChangeLbs) {
+                if (weightChangeLbs < 0) {
+                    return `lose ${Math.abs(weightChangeLbs).toFixed(2)} lbs (${(Math.abs(weightChangeLbs) * 0.453592).toFixed(2)} kg)`;
+                } else if (weightChangeLbs > 0) {
+                    return `gain ${weightChangeLbs.toFixed(2)} lbs (${(weightChangeLbs * 0.453592).toFixed(2)} kg)`;
+                } else {
+                    return "maintain your weight";
+                }
+            }
+
+            function updateProgressVisualization(currentWeight, goalWeight, projectedWeight) {
+                const totalChangeNeeded = Math.abs(goalWeight - currentWeight);
+                let progressPercentage = 0;
+                
+                if (totalChangeNeeded > 0) {
+                    if (currentWeight > goalWeight) {
+                        const projectedLoss = currentWeight - projectedWeight;
+                        progressPercentage = (projectedLoss / totalChangeNeeded) * 100;
+                    } else if (currentWeight < goalWeight) {
+                        const projectedGain = projectedWeight - currentWeight;
+                        progressPercentage = (projectedGain / totalChangeNeeded) * 100;
+                    }
+                }
+                
+                progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+                
+                const progressIndicator = document.getElementById('progress-indicator');
+                progressIndicator.style.width = `${progressPercentage}%`;
+                
+                if (progressPercentage < 25) {
+                    progressIndicator.classList.remove('bg-yellow-500', 'bg-green-500');
+                    progressIndicator.classList.add('bg-blue-500');
+                } else if (progressPercentage < 75) {
+                    progressIndicator.classList.remove('bg-blue-500', 'bg-green-500');
+                    progressIndicator.classList.add('bg-yellow-500');
+                } else {
+                    progressIndicator.classList.remove('bg-blue-500', 'bg-yellow-500');
+                    progressIndicator.classList.add('bg-green-500');
+                }
+            }
+
+            // Set up caloric expenditure calculator
+            const activityTypeSelect = document.getElementById('activity-type');
+            const activityDurationInput = document.getElementById('activity-duration');
+            const caloriesBurnedDisplay = document.getElementById('calories-burned');
+            
+            function updateCaloriesBurned() {
+                const duration = parseFloat(activityDurationInput.value) || 0;
+                if (duration > 0) {
+                    const calories = calculateCaloricExpenditure(weight_kg, activityTypeSelect.value, duration);
+                    caloriesBurnedDisplay.textContent = `${calories} calories burned`;
+                } else {
+                    caloriesBurnedDisplay.textContent = 'Enter duration to calculate';
+                }
+            }
+            
+            // Add event listeners
+            activityTypeSelect.addEventListener('change', updateCaloriesBurned);
+            activityDurationInput.addEventListener('input', updateCaloriesBurned);
+            activityLevelSelect.addEventListener('change', calculateMetrics);
+            ageInput.addEventListener('change', calculateMetrics);
+            ageInput.addEventListener('input', calculateMetrics);
+            exerciseBurnInput.addEventListener('input', function() {
+                exerciseBurn = parseInt(this.value);
+                exerciseBurnValue.textContent = `${exerciseBurn} cal`;
+                calculateMetrics();
+            });
+            
+            // Initial calculations
+            calculateMetrics();
+            updateCaloriesBurned();
+        });
+    </script>
+</body>
+</html>
